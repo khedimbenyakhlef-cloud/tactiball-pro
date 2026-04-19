@@ -1,0 +1,128 @@
+══════════════════════════════════════════════════════════════
+PROMPT POUR KHEDIM AI — TACTI-BALL PRO v2.0
+Copiez-collez ce texte exactement dans KHEDIM AI
+══════════════════════════════════════════════════════════════
+
+Tu es KHEDIM AI, expert en développement logiciel. Génère un projet complet appelé "TACTI-BALL PRO" — une plateforme d'analyse tactique football IA.
+
+== STACK TECHNIQUE ==
+- Backend : Python FastAPI + Groq (modèles llama-3.3-70b-versatile, llama-4-scout, qwen3-32b)
+- Frontend : HTML5 + CSS3 + JavaScript vanilla (SPA — un seul fichier index.html)
+- Pas de base de données requise
+- Déployable gratuitement sur Render.com (backend) + InfinityFree (frontend)
+
+== FONCTIONNALITÉS OBLIGATOIRES ==
+
+1. ANALYSE VIDÉO (2 modes) :
+   - Upload fichier local (MP4, AVI, MOV, MKV, WebM — max 500MB)
+   - Analyse depuis URL (YouTube, YouTube Live, liens directs)
+   - L'IA analyse : formations détectées, réseau de passes, zones de pressing, statistiques
+   - Retourne données joueurs en JSON pour affichage sur terrain
+
+2. TERRAIN 3D INTERACTIF :
+   - Canvas HTML5 avec perspective 3D (vue trapèze — pas de WebGL)
+   - Joueurs représentés par cercles colorés avec numéro
+   - Ballon qui se déplace en mouvement temps réel (animation requestAnimationFrame)
+   - Joueurs qui se déplacent selon leur formation avec mouvement naturel
+   - Modes : Vue 3D perspective / Vue Top / Vue Côté
+   - Heatmap par équipe (zones de chaleur colorées)
+   - Réseau de passes affiché en lignes translucides
+   - Formations supportées : 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 5-3-2, 4-5-1
+   - Couleurs maillot personnalisables (color picker)
+
+3. LIVE MATCH EN DIRECT (2 sources) :
+   - Source caméra locale : getUserMedia() → capture frames → envoi base64 API
+   - Source URL stream : YouTube Live ou lien direct
+   - OCR via Groq Vision : détecte numéros maillots, couleurs équipes, score à l'écran, chronomètre, position ballon
+   - Fréquence d'analyse configurable (500ms à 5000ms)
+   - WebSocket /ws/live pour mises à jour temps réel
+
+4. DASHBOARD STATISTIQUES COMPLET :
+   - Tableau de score (scoreboard) avec badge LIVE animé
+   - Barre de possession (%) animée pour les 2 équipes
+   - Stats complètes : tirs, tirs cadrés, passes, fautes, corners, hors-jeu, cartons jaunes/rouges
+   - Journal d'événements avec icônes (⚽ 🟨 🟥 🎯 🚩)
+   - Boutons pour ajouter événements manuellement (but, carton, tir, corner, faute)
+   - Mini terrain avec positions joueurs mises à jour en temps réel
+
+5. ANALYSE TACTIQUE IA :
+   - Analyse formation vs adversaire
+   - Plan de jeu (défense, transition, attaque)
+   - Rapport de match complet
+   - Note tactique /10
+
+6. COACH IA (TACTI-BOT) :
+   - Chat conversationnel avec historique
+   - Expert tactiques, formations, règles FIFA/UEFA
+   - Boutons raccourcis pour questions fréquentes
+
+7. PLAN D'ENTRAÎNEMENT :
+   - Programme semaine par semaine
+   - Exercices spécifiques au focus choisi
+   - Analyse joueur individuelle
+
+== STRUCTURE FICHIERS À GÉNÉRER ==
+
+Génère ces fichiers COMPLETS (aucune troncature) :
+
+**backend/main.py**
+- API FastAPI complète avec tous les endpoints
+- Rotation automatique clé×modèle Groq (2 clés × 4 modèles = 8 combinaisons)
+- WebSocket /ws/live avec broadcast à tous les clients connectés
+- Endpoint POST /api/video/upload (reçoit FormData avec fichier)
+- Endpoint POST /api/video/url (analyse URL YouTube/stream)
+- Endpoint POST /api/ocr/frame (reçoit image base64, retourne JSON joueurs détectés)
+- Endpoint POST /api/live/start (initialise état match avec positions joueurs selon formation)
+- Endpoint POST /api/live/stop (génère rapport final)
+- GET /api/live/state (retourne état complet du match)
+- POST /api/live/event (but, carton, tir, etc.)
+- POST /api/live/update_players
+- POST /api/tactical-analysis, /api/match-report, /api/player-analysis
+- POST /api/coach-chat (avec historique conversation)
+- POST /api/training-plan, /api/formation-suggest
+- POST /api/passes/analyze, /api/heatmap/analyze
+- Fonction _generate_initial_positions(formation) qui calcule les positions XY des 11 joueurs
+- Keep-alive toutes les 5 minutes pour éviter le spin-down Render
+- CORS allow_origins=["*"]
+
+**backend/requirements.txt**
+fastapi==0.111.0, uvicorn==0.30.1, groq==0.9.0, pydantic==2.7.1, httpx==0.27.0, python-multipart==0.0.9, websockets==12.0, python-dotenv==1.0.0, Pillow==10.3.0, opencv-python-headless==4.9.0.80, pytesseract==0.3.10, yt-dlp==2024.5.27, aiofiles==23.2.1
+
+**backend/.env.example**
+GROQ_API_KEY=gsk_...
+GROQ_API_KEY_2=gsk_...
+RENDER_EXTERNAL_URL=https://votre-app.onrender.com
+
+**frontend/index.html**
+Interface SPA complète avec :
+- Navbar avec 6 onglets : LIVE / Vidéo / Terrain 3D / Tactique / Coach IA / Entraînement
+- Panel LIVE : setup match, scoreboard animé, dashboard stats, terrain temps réel, caméra OCR
+- Panel Vidéo : upload zone drag&drop + URL input + résultats avec terrain
+- Panel Terrain 3D : canvas 3D complet avec animation, formation grids, contrôles
+- Panel Tactique : formulaire analyse + rapport match
+- Panel Coach IA : chat avec historique + boutons raccourcis
+- Panel Entraînement : plan IA + analyse joueur
+- Thème sombre : fond #050A0E, accent vert #00C853, gold #FFD700
+- Toasts notifications, barre de progression upload
+- WebSocket connexion pour live updates
+- OCR caméra : getUserMedia → canvas → base64 → API → affichage résultats
+- Terrain 3D : Canvas 2D avec perspective trapèze, joueurs animés, ballon qui rebondit
+
+**README.md**
+Instructions complètes de déploiement Render + InfinityFree + configuration clés Groq
+
+== RÈGLES ABSOLUES ==
+- Code 100% fonctionnel, ZÉRO troncature, ZÉRO placeholder
+- Chaque fichier minimum 300 lignes
+- Tous les imports inclus
+- frontend/index.html doit être un fichier unique contenant HTML + CSS + JS
+- La variable API dans le JS doit pointer vers 'https://tactiball-pro.onrender.com'
+- Le terrain 3D DOIT animer avec requestAnimationFrame
+- La caméra OCR DOIT utiliser navigator.mediaDevices.getUserMedia
+- L'upload vidéo DOIT supporter le drag&drop
+
+Fournis TOUS les fichiers en ZIP téléchargeable. Code production-ready.
+
+══════════════════════════════════════════════════════════════
+FIN DU PROMPT — Donnez ceci à KHEDIM AI et comparez !
+══════════════════════════════════════════════════════════════
